@@ -45,9 +45,9 @@ CREATE TABLE [G_Student](
 	FOREIGN KEY (gid) REFERENCES [Group] (gid)
 	)
 
-CREATE TABLE [Assessment](
-	[aid] [int] PRIMARY KEY NOT NULL,
-	[Category] [nvarchar](50) NOT NULL,
+CREATE TABLE [Info_Assessment](
+	[Category_ID] [int] PRIMARY KEY NOT NULL,
+	[Category_name] [nvarchar](50) NOT NULL,
 	[Type] [nvarchar](50) NOT NULL,
 	[Part] [int] NOT NULL,
 	[Weight] [float] NOT NULL,
@@ -57,9 +57,15 @@ CREATE TABLE [Assessment](
 	[No question] [int] NOT NULL,
 	[Knowledge and Skill] [nvarchar](150) NOT NULL,
 	[Grading guide] [nvarchar](150) NOT NULL,
-	[Note] [nvarchar](150) NOT NULL,
+	[Note] [nvarchar](150) NOT NULL
+	)
+
+CREATE TABLE [Assessment](
+	[aid] [int] PRIMARY KEY NOT NULL,
 	[suid] [int] NOT NULL,
-	FOREIGN KEY (suid) REFERENCES [Subject] (suid)
+	[Category_ID] [int] NOT NULL,
+	FOREIGN KEY (suid) REFERENCES [Subject] (suid),
+	FOREIGN KEY (Category_ID) REFERENCES [Info_Assessment] (Category_ID)
 	)
 
 CREATE TABLE [Result](
