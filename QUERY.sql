@@ -47,10 +47,8 @@ SELECT *
 FROM Student s
 WHERE s.sname LIKE 'C%'
 
--- 8.A query that uses a self-JOIN
 
-
--- 9.Check current avg of student
+-- 8.Check current avg of student
 SELECT s.sid,s.sname AS [Student Name], su.suname AS [Subject Name],SUM(st.score * ia.Weight) AS[AVG]
 FROM  Student s INNER JOIN ScoreTable st ON s.sid = st.sid
 				INNER JOIN Assessment a ON st.aid = a.aid
@@ -58,6 +56,21 @@ FROM  Student s INNER JOIN ScoreTable st ON s.sid = st.sid
 				INNER JOIN Info_Assessment ia ON ia.Category_ID = a.Category_ID
 GROUP BY s.sid, s.sname,su.suname
 ORDER BY s.sid
+
+-- 9.Check name student not enroll any subject
+SELECT s.sname
+FROM Student s LEFT JOIN Result r ON s.sid = r.sid
+GROUP BY s.sname
+HAVING COUNT(r.suid) = 0
+
+-- 10.Check name student enroll all subject
+SELECT tb2.sname
+FROM	(SELECT COUNT (su.suid) AS [Total Subject]
+		FROM Subject su) tb1 INNER JOIN (SELECT s.sname, COUNT(r.suid) AS [Number Subject]
+										FROM Student s LEFT JOIN Result r ON s.sid = r.sid
+										GROUP BY s.sname) tb2 
+										ON tb1.[Total Subject] = tb2.[Number Subject]
+
 
 
 
