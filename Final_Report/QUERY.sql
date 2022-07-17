@@ -1,6 +1,6 @@
--- 1.A query that uses ORDER BY to sort section by lecture id
+-- 1.A query that uses ORDER BY to sort section by group id
 SELECT * FROM Section
-ORDER BY lid ASC
+ORDER BY gid ASC
 
 -- 2.A query that uses INNER JOINS to check which teachers Student studied
 SELECT s.sname, L.lname
@@ -10,12 +10,14 @@ FROM Student s INNER JOIN G_Student gs ON s.sid = gs.sid
 
 -- 3.A query that uses aggregate functions to count how many section lecture teached
 SELECT l.lname, COUNT (se.seid) AS NumberSectionTeached
-FROM Lecture l INNER JOIN Section se ON se.lid = l.lid 
+FROM Lecture l INNER JOIN [Group] g ON g.gid = l.lid 
+				INNER JOIN Section se ON se.gid = g.lid
 GROUP BY l.lname
 
 -- 4.A query that uses the GROUP BY and HAVING clauses to check lecture teaches more than 10 section
 SELECT l.lname, COUNT (se.seid) AS NumberSectionTeached
-FROM Lecture l INNER JOIN Section se ON se.lid = l.lid 
+FROM Lecture l  INNER JOIN [Group] g ON g.gid = l.lid 
+				INNER JOIN Section se ON se.gid = g.lid
 GROUP BY l.lname 
 HAVING  COUNT (se.seid) > 10
 
@@ -42,10 +44,10 @@ FROM
 	GROUP BY s.sid, s.sname,su.suname) tb1
 ORDER BY tb1.AVG 
 
--- 7.A query that uses partial matching in the WHERE clause to find student have name start with letters C
+-- 7.A query that uses partial matching in the WHERE clause to find student have name start with letters M
 SELECT *
 FROM Student s
-WHERE s.sname LIKE 'C%'
+WHERE s.sname LIKE 'M%'
 
 
 -- 8.Check current avg of student
@@ -74,8 +76,21 @@ FROM	(SELECT COUNT (g.gid) AS [Total Group]
 										ON tb1.[Total Group] = tb2.[Number Group]
 
 
+alter PROC CaculateAVG
+AS
+BEGIN
+SELECT s.sid,s.sname AS [Student Name], su.suname AS [Subject Name],SUM(st.score * ia.Weight) AS[AVG]
+FROM  Student s INNER JOIN ScoreTable st ON s.sid = st.sid
+				INNER JOIN Assessment a ON st.aid = a.aid
+				INNER JOIN Subject su ON su.suid = a.suid
+				INNER JOIN Info_Assessment ia ON ia.Category_ID = a.Category_ID
+GROUP BY s.sid, s.sname,su.suname
+ORDER BY s.sid
+END
 
+EXEC CaculateAVG
 
+CREATE INDEX index_score ON [ScoreTable](stid)
 
 
 
