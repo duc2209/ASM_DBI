@@ -57,19 +57,21 @@ FROM  Student s INNER JOIN ScoreTable st ON s.sid = st.sid
 GROUP BY s.sid, s.sname,su.suname
 ORDER BY s.sid
 
--- 9.Check name student not enroll any subject
-SELECT s.sname
-FROM Student s LEFT JOIN Result r ON s.sid = r.sid
-GROUP BY s.sname
-HAVING COUNT(r.suid) = 0
+-- 9.Check name student not enroll any group
+SELECT s.sid,s.sname
+FROM Student s LEFT JOIN G_Student r ON s.sid = r.sid
+				LEFT JOIN [Group] g ON g.gid= r.gid
+GROUP BY s.sid,s.sname
+HAVING COUNT(g.gid) = 0
 
--- 10.Check name student enroll all subject
-SELECT tb2.sname
-FROM	(SELECT COUNT (su.suid) AS [Total Subject]
-		FROM Subject su) tb1 INNER JOIN (SELECT s.sname, COUNT(r.suid) AS [Number Subject]
-										FROM Student s LEFT JOIN Result r ON s.sid = r.sid
-										GROUP BY s.sname) tb2 
-										ON tb1.[Total Subject] = tb2.[Number Subject]
+-- 10.Check name student enroll all group
+SELECT  tb2.sname
+FROM	(SELECT COUNT (g.gid) AS [Total Group]
+		FROM [Group] g) tb1 INNER JOIN (SELECT s.sname, COUNT(g.gid) AS [Number Group]
+										FROM Student s LEFT JOIN G_Student r ON s.sid = r.sid
+														LEFT JOIN [Group] g ON g.gid= r.gid
+														GROUP BY s.sid,s.sname) tb2
+										ON tb1.[Total Group] = tb2.[Number Group]
 
 
 
