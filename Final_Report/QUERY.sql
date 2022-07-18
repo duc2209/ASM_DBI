@@ -1,3 +1,15 @@
+-- CHECK pass or not pass
+SELECT s.sid,s.sname AS [Student Name], su.suname AS [Subject Name],SUM(st.score * ia.Weight) AS[AVG],
+CASE
+	WHEN SUM(st.score * ia.Weight) < 5 THEN 'NOTPASS'
+	ELSE 'PASS'
+	END AS [STATUS]
+FROM  Student s INNER JOIN ScoreTable st ON s.sid = st.sid
+				INNER JOIN Assessment a ON st.aid = a.aid
+				INNER JOIN Subject su ON su.suid = a.suid
+				INNER JOIN Info_Assessment ia ON ia.Category_ID = a.Category_ID
+GROUP BY s.sid, s.sname,su.suname
+
 -- 1.A query that uses ORDER BY to sort section by group id
 SELECT * FROM Section
 ORDER BY gid ASC
@@ -91,6 +103,8 @@ END
 EXEC CaculateAVG
 
 CREATE INDEX index_score ON [ScoreTable](stid)
+
+
 
 
 
